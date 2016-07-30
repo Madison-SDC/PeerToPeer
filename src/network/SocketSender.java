@@ -41,12 +41,10 @@ public class SocketSender extends Thread implements Runnable{
 		System.out.println("Connection to " + ip + " on port " + port + " established.");
 		while (running) {
 			try {
-				while ((curr = in.readObject()) != null) processObject();
+				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));
 			} catch (Exception io) { io.printStackTrace(); }
 		}
 	}
-	
-	private void processObject() { queue.add(new ActionItem(curr)); }
 	
 	public void sendObject(Object e) {
 		try {

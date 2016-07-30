@@ -49,18 +49,16 @@ public class SocketListener extends Thread implements Runnable {
 		connected = true;
 		while (alive) {
 			try {
-				while ((curr = in.readObject()) != null) processObject();
+				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));
 			} catch (Exception io) { io.printStackTrace(); }
 		}
 	}
 	
 	public boolean isConnected() { return connected; }
 	public boolean isPolling() { return alive; }
-	public void processObject() { queue.add(new ActionItem(curr)); }
 	
 	public void sendObject(Object e) { 
-		try {
-			out.writeObject(e);
+		try { out.writeObject(e);
 		} catch (IOException io) { io.printStackTrace(); }
 	}
 	

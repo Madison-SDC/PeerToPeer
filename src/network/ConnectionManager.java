@@ -41,6 +41,7 @@ public class ConnectionManager {
 		incoming = new HashMap<String, ServerSocket>();
 		activeIncomingConnections = new HashMap<String, SocketListener>();
 		activeOutgoingConnections = new HashMap<String, SocketSender>();
+		connectionType = new HashMap<String, Integer>();
 		numConnections = new HashMap<Integer, Integer>();
 	}
 	
@@ -95,5 +96,13 @@ public class ConnectionManager {
 		if (connectionType.get(connectionName) == 0) return true; 
 		return false;
 	}
+	
+	public int getConnectionType(String connectionName) { return connectionType.get(connectionName); }
+	
+	public SocketListener getListeningConnection(String connection) { return activeIncomingConnections.get(connection); }
+	public SocketSender getSendingConnection(String connection) { return activeOutgoingConnections.get(connection); }
+	
+	public SynchronousQueue<ActionItem> getIncomingQueue() { return incomingQueue; }
+	public SynchronousQueue<ActionItem> getOutgoingQueue() { return outgoingQueue; }
 	
 }
