@@ -69,7 +69,7 @@ public class ConnectionManager {
 	}
 	
 	public void connectTo(String ip, int port, String connectionName) {
-		activeOutgoingConnections.put(connectionName, new SocketSender(ip, port, incomingQueue));
+		activeOutgoingConnections.put(connectionName, new SocketSender(ip, port, incomingQueue, connectionName));
 		connectionType.put(connectionName, 1);
 	}
 	

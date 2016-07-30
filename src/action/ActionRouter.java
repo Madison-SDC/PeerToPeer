@@ -34,7 +34,7 @@ public class ActionRouter extends Thread implements Runnable{
 		else currentSendingConnection.sendObject(a);
 	}
 	
-	public void setCurrentConnection(String connection) { 
+	public synchronized void setCurrentConnection(String connection) { 
 		currentSelectedConnection = connection;
 		currentConnectionType = cm.getConnectionType(connection);
 		

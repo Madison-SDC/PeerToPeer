@@ -50,7 +50,11 @@ public class SocketListener extends Thread implements Runnable {
 		while (alive) {
 			try {
 				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));
-			} catch (Exception io) { io.printStackTrace(); }
+			} catch (Exception io) { 
+				alive = false;
+				System.out.println(connectionName + " went down.");
+				//io.printStackTrace();
+			}
 		}
 	}
 	

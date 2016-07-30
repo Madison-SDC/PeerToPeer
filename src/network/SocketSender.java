@@ -18,11 +18,13 @@ public class SocketSender extends Thread implements Runnable{
 	private String ip;
 	private int port;
 	private Object curr;
+	private String connectionName;
 	
-	public SocketSender(String ip, int port, SynchronousQueue<ActionItem> queue) {
+	public SocketSender(String ip, int port, SynchronousQueue<ActionItem> queue, String connectionName) {
 		super();
 		this.ip = ip;
 		this.port = port;
+		this.connectionName = connectionName;
 		try { 
 			connection = new Socket(ip, port);
 			in = new ObjectInputStream(connection.getInputStream());
@@ -42,7 +44,11 @@ public class SocketSender extends Thread implements Runnable{
 		while (running) {
 			try {
 				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));
-			} catch (Exception io) { io.printStackTrace(); }
+			} catch (Exception io) {
+				running = false;
+				System.out.println(connectionName + " went down.");
+				//io.printStackTrace();
+			}
 		}
 	}
 	
