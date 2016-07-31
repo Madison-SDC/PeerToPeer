@@ -24,28 +24,43 @@ public class ActionRouter extends Thread implements Runnable {
 	}
 	
 	public void run() {
+		int tries = 5;
 		while (true) {
-			while ((curr = queue.poll()) != null) sendActionObject(curr);
+			while ((curr = queue.poll()) != null) {
+				tries = 5;
+				while (!sendActionObject(curr)) {
+					mySleep(500); 
+					System.out.println("Trying " + tries + " more times.");
+					tries--;
+				}
+			}
 		}
 	}
 	
-	private synchronized void sendActionObject(ActionItem a) {
-		if (a.willBroadcast()) { broadcastActionObject(a); return; }
-		if (currConnection.isConnected()) {
-			System.out.print("Sending to: " + currConnection.getConnectionName() + " . . . ");
+	private static void mySleep(int time) {
+		try { Thread.sleep(time); } catch (InterruptedException ie) { ie.printStackTrace(); }
+	}
+	
+	private synchronized boolean sendActionObject(ActionItem a) {
+		if (a.willBroadcast()) { return broadcastActionObject(a); }
+		try { 
+			currConnection = cm.getConnection(currentSelectedConnection);
+			System.out.println("Sending to: " + currConnection.getConnectionName() + " . . . ");
 			currConnection.sendObject(a);
+			return true;
 		}
-		else System.out.println("Current connection is down!");
+		catch (NullPointerException npe) { 
+			System.out.println("Connection '' is either dead not not up yet!");
+			return false;
+		}
 	}
 	
-	private synchronized void broadcastActionObject(ActionItem a) {
+	private boolean broadcastActionObject(ActionItem a) {
 		System.out.println("Not implemented");
+		return false;
 	}
 	
-	public synchronized void setCurrentConnection(String name) { 
-		currConnection = cm.getConnection(name);
-	}
-	
+	public void setCurrentConnection(String name) { currentSelectedConnection = name; }
 	public String getCurrentConnectionName() { return currentSelectedConnection; }
 	
 }
