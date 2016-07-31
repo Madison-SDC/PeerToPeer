@@ -3,21 +3,20 @@ package network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import action.ActionItem;
 
 public class Connection extends Thread implements Runnable {
 
 	private boolean alive = true;
-	private SynchronousQueue<ActionItem> queue;
+	private LinkedBlockingQueue<ActionItem> queue;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	private Object curr;
 	private String connectionName;
 
-	public Connection(ObjectOutputStream out, ObjectInputStream in, String name, SynchronousQueue<ActionItem> incoming) throws IOException {
+	public Connection(ObjectOutputStream out, ObjectInputStream in, String name, LinkedBlockingQueue<ActionItem> incoming) throws IOException {
 		super();
 		this.connectionName = name;
 		this.queue = incoming;
