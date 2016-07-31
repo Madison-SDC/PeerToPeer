@@ -22,7 +22,6 @@ public class ConnectionEstablisher {
 		listeningSocket = socket;
 		this.name = name;
 		this.port = socket.getLocalPort();
-		
 		System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
 		try {
 			Socket newConnection = listeningSocket.accept();

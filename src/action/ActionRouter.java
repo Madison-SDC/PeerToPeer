@@ -30,10 +30,9 @@ public class ActionRouter extends Thread implements Runnable {
 				tries = 5;
 				while (!sendActionObject(curr) && tries > 0) {
 					mySleep(500); 
-					System.out.print(tries + " . . . ");
+					System.out.print("Retry " + tries + " . . . ");
 					tries--;
 				}
-				if (tries == 0) System.out.println();
 			}
 		}
 	}
@@ -47,7 +46,7 @@ public class ActionRouter extends Thread implements Runnable {
 		try { 
 			currConnection = cm.getConnection(currentSelectedConnection);
 			if (currConnection.isAlive()) {
-				System.out.println("Sending to: " + currConnection.getConnectionName() + " . . . ");
+				System.out.println("Sending to: " + currentSelectedConnection + " . . . ");
 				currConnection.sendObject(a);
 				return true;
 			}
@@ -57,7 +56,7 @@ public class ActionRouter extends Thread implements Runnable {
 			}
 		}
 		catch (NullPointerException npe) { 
-			System.out.println("Connection '' is either dead not not up yet!");
+			System.out.println("Connection '" + currentSelectedConnection + "' is either dead not not up yet!");
 			return false;
 		}
 	}
