@@ -38,7 +38,8 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 			try {
 				Socket newConnection = listeningSocket.accept();
 				System.out.println(name + " connected!");
-				cm.addConnection(name, new Connection(newConnection, name, cm.getIncomingQueue()));
+				Connection temp = new Connection(newConnection, name, cm.getIncomingQueue());
+				cm.addConnection(name, temp);
 			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 		else {
@@ -46,7 +47,8 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 				System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 				Socket newSocket = new Socket(ip, port);
 				System.out.println(name + " connected!");
-				cm.addConnection(name, new Connection(newSocket, name, cm.getIncomingQueue()));
+				Connection temp = new Connection(newSocket, name, cm.getIncomingQueue());
+				cm.addConnection(name, temp);
 			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 	}
