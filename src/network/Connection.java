@@ -9,7 +9,7 @@ import java.util.concurrent.SynchronousQueue;
 import action.ActionItem;
 
 public class Connection extends Thread implements Runnable {
-	
+
 	private boolean alive = true;
 	private boolean connected = false;
 	private Socket conn;
@@ -18,22 +18,28 @@ public class Connection extends Thread implements Runnable {
 	private ObjectInputStream in;
 	private Object curr;
 	private String connectionName;
-	
-	public Connection(Socket conn, String connectionName, SynchronousQueue<ActionItem> incoming) throws IOException {
+
+	public Connection(Socket conn, String connectionName, SynchronousQueue<ActionItem> incoming, boolean first) throws IOException {
 		super();
 		this.conn = conn;
 		this.connectionName = connectionName;
 		this.queue = incoming;
+
+		try {
+			if (first) {
+				in = new ObjectInputStream(conn.getInputStream());
+				out = new ObjectOutputStream(conn.getOutputStream());
+			}
+			else {
+				out = new ObjectOutputStream(conn.getOutputStream());
+				in = new ObjectInputStream(conn.getInputStream());
+			}
+		} catch (IOException io) { io.printStackTrace(); }
+
 		this.start();
 	}
-	
+
 	public void run() {
-		//System.out.println("Attempting to start listening thread for '" + connectionName + "'.");
-		try {
-			in = new ObjectInputStream(conn.getInputStream());
-			out = new ObjectOutputStream(conn.getOutputStream());
-		} catch (IOException io) { io.printStackTrace(); }
-		//System.out.println("A listening thread has been started.");
 		while (alive) {
 			try {
 				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));
@@ -43,17 +49,17 @@ public class Connection extends Thread implements Runnable {
 			}
 		}
 	}
-	
+
 	public void sendObject(Object e) {
 		try { out.writeObject(e);
 		} catch (IOException io) { io.printStackTrace(); }
 	}
-	
+
 	public boolean isConnected() { 
 		try { return conn.isConnected(); }
 		catch (Exception e) { return false; }
 	}
-	
+
 	public void kill() {
 		alive = false;
 		try { 
@@ -62,6 +68,6 @@ public class Connection extends Thread implements Runnable {
 			in.close();
 		} catch (IOException io) { io.printStackTrace(); }
 	}
-	
+
 	public String getConnectionName() { return connectionName; }
 }

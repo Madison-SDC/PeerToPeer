@@ -23,7 +23,7 @@ public class ConnectionEstablisher {
 		System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
 		try {
 			Socket newConnection = listeningSocket.accept();
-			conn = new Connection(newConnection, name, incoming);
+			conn = new Connection(newConnection, name, incoming, true);
 			System.out.println(name + " connected!");
 		} catch (IOException io) { System.out.println(io.getMessage()); }
 		
@@ -36,7 +36,7 @@ public class ConnectionEstablisher {
 		System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 		try {
 			Socket newSocket = new Socket(ip, port);
-			conn = new Connection(newSocket, name, incoming);
+			conn = new Connection(newSocket, name, incoming, false);
 			System.out.println(name + " connected!");
 		} catch (IOException io) { System.out.println(io.getMessage()); }
 	}
