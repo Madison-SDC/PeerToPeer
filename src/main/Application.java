@@ -1,6 +1,12 @@
 package main;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import action.ActionExecutor;
+import action.ActionItem;
 import action.ActionRouter;
 import action.InputHandler;
 import network.ConnectionManager;
@@ -8,16 +14,18 @@ import network.ConnectionManager;
 public class Application {
 	
 	private static ConnectionManager cm;
-	private static InputHandler ih;
+	//private static InputHandler ih;
 	private static ActionRouter ar;
 	private static ActionExecutor ae;
+	private static LinkedBlockingQueue<ActionItem> userInput;
+	private static boolean running = true;
 	
 	public static void main(String[] args) {
 		
 		int currComputer = 1;
 		
 		cm = new ConnectionManager();
-		ih = new InputHandler(cm.getOutgoingQueue());
+		//ih = new InputHandler(cm.getOutgoingQueue());
 		ar = new ActionRouter(cm.getOutgoingQueue(), cm);
 		ae = new ActionExecutor(cm.getIncomingQueue());
 		
@@ -27,10 +35,26 @@ public class Application {
 		case 3: testComputer3(); break;
 		}
 		
-		while (true) {
-			try { Thread.sleep(5000); } catch (InterruptedException e) { e.printStackTrace(); }
-			System.out.println("Main woke up.");
+		// processing user input
+		userInput = cm.getOutgoingQueue();
+		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+		String userStringInput;
+		
+		while (running) {
+			try {
+				while ((userStringInput = stdIn.readLine()) != null) processInput(userStringInput);
+			} catch (IOException io) { io.printStackTrace(); }
 		}
+	}
+	
+	private static void processInput(String in) {
+		if (in.equals("quit")) {
+			running = false;
+			return;
+		}
+		System.out.println("Processing: " + in);
+		try { userInput.put(new ActionItem(in)); } 
+		catch (InterruptedException ie) { ie.printStackTrace(); }
 	}
 	
 	private static void testComputer1() {
@@ -46,13 +70,13 @@ public class Application {
 	
 	private static void testComputer2() {
 		cm.connectTo("10.0.0.12", 61111, "testOutgoing");
-		while(cm.getConnection("testOutgoing") == null);
+		//while(cm.getConnection("testOutgoing") == null);
 		ar.setCurrentConnection("testOutgoing");
 	}
 	
 	private static void testComputer3() {
 		cm.connectTo("10.0.0.12", 61111, "testOutgoing");
-		while(cm.getConnection("testOutgoing") == null);
+		//while(cm.getConnection("testOutgoing") == null);
 		ar.setCurrentConnection("testOutgoing");
 	}
 }
