@@ -27,6 +27,10 @@ public class SocketSender extends Thread implements Runnable{
 		this.port = port;
 		this.connectionName = connectionName;
 		this.queue = queue;
+		this.start();
+	}
+	
+	public void run() {
 		try {
 			System.out.println("Reaching out to " + ip + " on port " + port + "");
 			connection = new Socket(ip, port);
@@ -38,9 +42,7 @@ public class SocketSender extends Thread implements Runnable{
 		} catch (IOException io) { 
 			io.printStackTrace();
 		}
-	}
-	
-	public void run() {
+		
 		System.out.println("Connection to " + ip + " on port " + port + " established.");
 		while (running) {
 			try {
