@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import action.ActionItem;
 
@@ -19,7 +19,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 	private Socket initialSocket;
 	private boolean listening = false;
 	private boolean obtained = false;
-	private SynchronousQueue<ActionItem> incoming;
+	private LinkedBlockingQueue<ActionItem> incoming;
 
 	/**
 	 * For connections initialized with a ServerSocket.
@@ -27,7 +27,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 	 * @param name
 	 * @param incoming
 	 */
-	public ConnectionEstablisher(ServerSocket socket, String name, SynchronousQueue<ActionItem> incoming) {
+	public ConnectionEstablisher(ServerSocket socket, String name, LinkedBlockingQueue<ActionItem> incoming) {
 		super();
 		listeningSocket = socket;
 		this.name = name;
@@ -45,7 +45,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 	 * @param name
 	 * @param incoming
 	 */
-	public ConnectionEstablisher(String ip, int port, String name, SynchronousQueue<ActionItem> incoming) {
+	public ConnectionEstablisher(String ip, int port, String name, LinkedBlockingQueue<ActionItem> incoming) {
 		super();
 		this.ip = ip;
 		this.port = port;

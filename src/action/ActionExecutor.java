@@ -1,22 +1,26 @@
 package action;
 
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ActionExecutor extends Thread implements Runnable {
 	
 	boolean running = true;
-	SynchronousQueue<ActionItem> events;
+	LinkedBlockingQueue<ActionItem> events;
 	ActionItem curr;
 
-	public ActionExecutor(SynchronousQueue<ActionItem> events) {
+	public ActionExecutor(LinkedBlockingQueue<ActionItem> events) {
 		super();
 		this.events = events;
 		this.start();
 	}
 	
 	public void run() {
-		while (running) 
-			while ((curr = events.poll()) != null) executeEvent(curr);
+		while (running) {
+			try { curr = events.take(); }
+			catch (InterruptedException ie) { ie.printStackTrace(); }
+			executeEvent(curr);
+		}
+		//while ((curr = events.poll()) != null) executeEvent(curr);
 	}
 	
 	private void executeEvent(ActionItem event) {

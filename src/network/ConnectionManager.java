@@ -2,10 +2,8 @@ package network;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import action.ActionItem;
 
@@ -14,14 +12,14 @@ public class ConnectionManager {
 	HashMap<String, Connection> allConnections;
 	HashMap<Integer, ServerSocket> serverSockets;
 	
-	SynchronousQueue<ActionItem> incoming;
-	SynchronousQueue<ActionItem> outgoing;
+	LinkedBlockingQueue<ActionItem> incoming;
+	LinkedBlockingQueue<ActionItem> outgoing;
 	
 	public ConnectionManager() {
 		allConnections = new HashMap<String, Connection>();
 		serverSockets = new HashMap<Integer, ServerSocket>();
-		incoming = new SynchronousQueue<ActionItem>();
-		outgoing = new SynchronousQueue<ActionItem>();
+		incoming = new LinkedBlockingQueue<ActionItem>();
+		outgoing = new LinkedBlockingQueue<ActionItem>();
 	}
 	
 	public synchronized void listenOn(int port, String name) {
@@ -50,7 +48,7 @@ public class ConnectionManager {
 	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
 	public Connection getConnection(String name) { return allConnections.get(name); }
 	
-	public SynchronousQueue<ActionItem> getOutgoingQueue() { return outgoing; }
-	public SynchronousQueue<ActionItem> getIncomingQueue() { return incoming; }
+	public LinkedBlockingQueue<ActionItem> getOutgoingQueue() { return outgoing; }
+	public LinkedBlockingQueue<ActionItem> getIncomingQueue() { return incoming; }
 	
 }

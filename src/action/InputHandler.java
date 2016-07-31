@@ -3,18 +3,18 @@ package action;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Polls System.in, handles routing to different connections
  */
 public class InputHandler extends Thread implements Runnable {
 	
-	private SynchronousQueue<ActionItem> userInput;
+	private LinkedBlockingQueue<ActionItem> userInput;
 	private BufferedReader stdIn;
 	private String userStringInput;
 	
-	public InputHandler(SynchronousQueue<ActionItem> queue) {
+	public InputHandler(LinkedBlockingQueue<ActionItem> queue) {
 		super();
 		userInput = queue;
 		stdIn = new BufferedReader(new InputStreamReader(System.in));

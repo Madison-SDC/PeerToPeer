@@ -1,8 +1,7 @@
 package action;
 
-import java.net.SocketException;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import network.Connection;
 import network.ConnectionManager;
@@ -11,13 +10,13 @@ public class ActionRouter extends Thread implements Runnable {
 
 	private String currentSelectedConnection;
 	private List<String> currentRecipients;
-	private SynchronousQueue<ActionItem> queue;
+	private LinkedBlockingQueue<ActionItem> queue;
 	private ConnectionManager cm;
 	private ActionItem curr;
 	private Connection currConnection;
 
 
-	public ActionRouter(SynchronousQueue<ActionItem> queue, ConnectionManager cm) {
+	public ActionRouter(LinkedBlockingQueue<ActionItem> queue, ConnectionManager cm) {
 		super();
 		this.queue = queue;
 		this.cm = cm;
