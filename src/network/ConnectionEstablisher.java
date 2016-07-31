@@ -37,18 +37,18 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 			System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
 			try {
 				Socket newConnection = listeningSocket.accept();
-				System.out.println(name + " connected!");
 				Connection temp = new Connection(newConnection, name, cm.getIncomingQueue());
 				cm.addConnection(name, temp);
+				System.out.println(name + " connected!");
 			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 		else {
+			System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 			try {
-				System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 				Socket newSocket = new Socket(ip, port);
-				System.out.println(name + " connected!");
 				Connection temp = new Connection(newSocket, name, cm.getIncomingQueue());
 				cm.addConnection(name, temp);
+				System.out.println(name + " connected!");
 			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 	}

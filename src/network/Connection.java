@@ -25,10 +25,8 @@ public class Connection extends Thread implements Runnable {
 			this.conn = conn;
 			this.connectionName = connectionName;
 			this.queue = incoming;
-			System.out.println("Initializing " + connectionName + ".");
 			in = new ObjectInputStream(conn.getInputStream());
 			out = new ObjectOutputStream(conn.getOutputStream());
-			System.out.println("Connection " + " initialized.");
 			this.start();
 		} catch (IOException io) { throw new IOException("Could not establish connection '" + connectionName + "'."); }
 	}
