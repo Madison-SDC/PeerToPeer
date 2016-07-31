@@ -1,6 +1,8 @@
 package network;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.SynchronousQueue;
@@ -14,6 +16,7 @@ public class ConnectionEstablisher {
 	private String name;
 	private String ip;
 	private Connection conn;
+	private Socket initialSocket;
 	
 	public ConnectionEstablisher(ServerSocket socket, String name, SynchronousQueue<ActionItem> incoming) {
 		listeningSocket = socket;
@@ -23,7 +26,9 @@ public class ConnectionEstablisher {
 		System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
 		try {
 			Socket newConnection = listeningSocket.accept();
-			conn = new Connection(newConnection, name, incoming, true);
+			ObjectOutputStream out = new ObjectOutputStream(newConnection.getOutputStream());
+			ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
+			conn = new Connection(out, in, name, incoming);
 			System.out.println(name + " connected!");
 		} catch (IOException io) { System.out.println(io.getMessage()); }
 		
@@ -35,11 +40,14 @@ public class ConnectionEstablisher {
 		this.name = name;
 		System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 		try {
-			Socket newSocket = new Socket(ip, port);
-			conn = new Connection(newSocket, name, incoming, false);
+			initialSocket = new Socket(ip, port);
+			ObjectOutputStream out = new ObjectOutputStream(initialSocket.getOutputStream());
+			ObjectInputStream in = new ObjectInputStream(initialSocket.getInputStream());
+			conn = new Connection(out, in, name, incoming);
 			System.out.println(name + " connected!");
 		} catch (IOException io) { System.out.println(io.getMessage()); }
 	}
 	
 	public Connection getConnection() { return conn; }
+	public Socket getSocket() { return initialSocket; }
 }

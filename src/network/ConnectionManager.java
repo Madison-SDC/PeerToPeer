@@ -2,7 +2,9 @@ package network;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 
 import action.ActionItem;
@@ -15,26 +17,30 @@ public class ConnectionManager {
 	SynchronousQueue<ActionItem> incoming;
 	SynchronousQueue<ActionItem> outgoing;
 	
-	ConnectionEstablisher ce;
+	List<ConnectionEstablisher> ce;
+	ConnectionEstablisher temp;
 	
 	public ConnectionManager() {
 		allConnections = new HashMap<String, Connection>();
 		serverSockets = new HashMap<Integer, ServerSocket>();
 		incoming = new SynchronousQueue<ActionItem>();
 		outgoing = new SynchronousQueue<ActionItem>();
+		ce = new ArrayList<ConnectionEstablisher>();
 	}
 	
 	public synchronized void listenOn(int port, String name) {
 		if (serverSockets.containsKey(port)) {
-			ce = new ConnectionEstablisher(serverSockets.get(port), name, incoming);
-			this.addConnection(name, ce.getConnection());
+			temp = new ConnectionEstablisher(serverSockets.get(port), name, incoming);
+			ce.add(temp);
+			this.addConnection(name, temp.getConnection());
 		}
 		else {
 			try { 
-				ServerSocket temp = new ServerSocket(port);
-				serverSockets.put(port, temp);
-				ce = new ConnectionEstablisher(temp, name, incoming);
-				this.addConnection(name, ce.getConnection());
+				ServerSocket tempSock = new ServerSocket(port);
+				serverSockets.put(port, tempSock);
+				temp = new ConnectionEstablisher(tempSock, name, incoming);
+				ce.add(temp);
+				this.addConnection(name, temp.getConnection());
 			}
 			catch (IOException io) { io.printStackTrace(); }
 		}

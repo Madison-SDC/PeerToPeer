@@ -11,31 +11,18 @@ import action.ActionItem;
 public class Connection extends Thread implements Runnable {
 
 	private boolean alive = true;
-	private boolean connected = false;
-	private Socket conn;
 	private SynchronousQueue<ActionItem> queue;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	private Object curr;
 	private String connectionName;
 
-	public Connection(Socket conn, String connectionName, SynchronousQueue<ActionItem> incoming, boolean first) throws IOException {
+	public Connection(ObjectOutputStream out, ObjectInputStream in, String name, SynchronousQueue<ActionItem> incoming) throws IOException {
 		super();
-		this.conn = conn;
-		this.connectionName = connectionName;
+		this.connectionName = name;
 		this.queue = incoming;
-
-		try {
-			if (first) {
-				in = new ObjectInputStream(conn.getInputStream());
-				out = new ObjectOutputStream(conn.getOutputStream());
-			}
-			else {
-				out = new ObjectOutputStream(conn.getOutputStream());
-				in = new ObjectInputStream(conn.getInputStream());
-			}
-		} catch (IOException io) { io.printStackTrace(); }
-
+		this.out = out;
+		this.in = in;
 		this.start();
 	}
 
@@ -55,19 +42,14 @@ public class Connection extends Thread implements Runnable {
 		} catch (IOException io) { io.printStackTrace(); }
 	}
 
-	public boolean isConnected() { 
-		try { return conn.isConnected(); }
-		catch (Exception e) { return false; }
-	}
-
 	public void kill() {
 		alive = false;
 		try { 
-			conn.close();
 			out.close();
 			in.close();
 		} catch (IOException io) { io.printStackTrace(); }
 	}
 
 	public String getConnectionName() { return connectionName; }
+	public boolean isConnected() { return alive; }
 }
