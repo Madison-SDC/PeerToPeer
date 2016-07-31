@@ -28,7 +28,7 @@ public class ActionRouter extends Thread implements Runnable {
 		while (true) {
 			while ((curr = queue.poll()) != null) {
 				tries = 5;
-				while (!sendActionObject(curr)) {
+				while (!sendActionObject(curr) && tries > 0) {
 					mySleep(500); 
 					System.out.println("Trying " + tries + " more times.");
 					tries--;

@@ -17,7 +17,7 @@ public class ConnectionManager {
 	SynchronousQueue<ActionItem> incoming;
 	SynchronousQueue<ActionItem> outgoing;
 	
-	List<ConnectionEstablisher> ce;
+	//List<ConnectionEstablisher> ce;
 	ConnectionEstablisher temp;
 	
 	public ConnectionManager() {
@@ -25,13 +25,13 @@ public class ConnectionManager {
 		serverSockets = new HashMap<Integer, ServerSocket>();
 		incoming = new SynchronousQueue<ActionItem>();
 		outgoing = new SynchronousQueue<ActionItem>();
-		ce = new ArrayList<ConnectionEstablisher>();
+		//ce = new ArrayList<ConnectionEstablisher>();
 	}
 	
 	public synchronized void listenOn(int port, String name) {
 		if (serverSockets.containsKey(port)) {
 			temp = new ConnectionEstablisher(serverSockets.get(port), name, incoming);
-			ce.add(temp);
+			//ce.add(temp);
 			this.addConnection(name, temp.getConnection());
 		}
 		else {
@@ -39,7 +39,7 @@ public class ConnectionManager {
 				ServerSocket tempSock = new ServerSocket(port);
 				serverSockets.put(port, tempSock);
 				temp = new ConnectionEstablisher(tempSock, name, incoming);
-				ce.add(temp);
+				//ce.add(temp);
 				this.addConnection(name, temp.getConnection());
 			}
 			catch (IOException io) { io.printStackTrace(); }
@@ -53,7 +53,7 @@ public class ConnectionManager {
 	}
 	
 	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
-	public synchronized Connection getConnection(String name) { return allConnections.get(name); }
+	public Connection getConnection(String name) { return allConnections.get(name); }
 	
 	public SynchronousQueue<ActionItem> getOutgoingQueue() { return outgoing; }
 	public SynchronousQueue<ActionItem> getIncomingQueue() { return incoming; }

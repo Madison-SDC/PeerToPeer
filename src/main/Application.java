@@ -37,12 +37,11 @@ public class Application {
 		
 		// await first connection
 		cm.listenOn(61111, "testLocalIncoming1");
-		while(cm.getConnection("testLocalIncoming1") == null);
 		ar.setCurrentConnection("testLocalIncoming1");
 		
 		// await second connection
+		while(cm.getConnection("testLocalIncoming1") == null);
 		cm.listenOn(61111, "testLocalIncoming2");
-		while (cm.getConnection("testLocalIncoming2") == null);
 	}
 	
 	private static void testComputer2() {
