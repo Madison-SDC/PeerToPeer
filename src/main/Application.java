@@ -23,8 +23,8 @@ public class Application {
 		ar.setCurrentConnection("testLocalIncoming1");
 		while (!cm.getListeningConnection("testLocalIncoming1").isConnected());
 		
-		//cm.listenOn(61111, "testLocalIncoming2");
-		//while (!cm.getListeningConnection("testLocalIncoming2").isConnected());
+		cm.listenOn(61111, "testLocalIncoming2");
+		while (!cm.getListeningConnection("testLocalIncoming2").isConnected());
 		
 		//cm.connectTo("127.0.0.1", 61111, "testLocalOutgoing");
 		//ar.setCurrentConnection("testLocalOutgoing");

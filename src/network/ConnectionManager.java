@@ -60,6 +60,7 @@ public class ConnectionManager {
 		// poll for a connection on a new port/ServerSocket
 		try {
 			ServerSocket newPort = new ServerSocket(port);
+			newPort.setReuseAddress(true);
 			incoming.put(connectionName, newPort);
 			portmap.put(connectionName, port);
 			activeIncomingConnections.put(connectionName, new SocketListener(newPort, incomingQueue, connectionName));

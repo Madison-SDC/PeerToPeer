@@ -25,21 +25,21 @@ public class SocketSender extends Thread implements Runnable{
 		this.ip = ip;
 		this.port = port;
 		this.connectionName = connectionName;
-		try { 
+		this.queue = queue;
+		try {
+			System.out.println("Reaching out to " + ip + " on port " + port + "");
 			connection = new Socket(ip, port);
 			in = new ObjectInputStream(connection.getInputStream());
 			out = new ObjectOutputStream(connection.getOutputStream());
-		} catch (IOException io) { io.printStackTrace(); }
-		this.queue = queue;
-		this.start();
+			this.start();
+		} catch (IOException io) { 
+			//io.printStackTrace();
+			System.out.println("Connection to " + ip + " on port " + port + " could not be established.");
+			// how should we handle this?
+		}
 	}
 	
 	public void run() {
-		if(!waitForConnection()) {
-			running = false;
-			System.out.println("Connection to " + ip + " on port " + port + " was not established.");
-			this.kill();
-		}
 		System.out.println("Connection to " + ip + " on port " + port + " established.");
 		while (running) {
 			try {
@@ -56,16 +56,6 @@ public class SocketSender extends Thread implements Runnable{
 		try {
 			out.writeObject(e);
 		} catch (IOException io) { io.printStackTrace(); }
-	}
-	
-	private boolean waitForConnection() {
-		int numTries = 0;
-		while (!connection.isConnected() && numTries < 10) {
-			try { this.sleep(1000); } catch (InterruptedException ie) { ie.printStackTrace(); }
-			numTries++;
-		}
-		if (numTries == 10) return false;
-		return true;
 	}
 	
 	public boolean isConnected() { return connection.isConnected(); }
