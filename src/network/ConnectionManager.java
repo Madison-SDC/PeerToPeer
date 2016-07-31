@@ -48,7 +48,7 @@ public class ConnectionManager {
 	
 	public synchronized void connectTo(String ip, int port, String name) {
 		temp = new ConnectionEstablisher(ip, port, name, incoming);
-		ce.add(temp);
+		//ce.add(temp);
 		this.addConnection(name, temp.getConnection());
 	}
 	
