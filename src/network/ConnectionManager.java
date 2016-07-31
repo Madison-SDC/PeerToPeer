@@ -42,7 +42,9 @@ public class ConnectionManager {
 	}
 	
 	public synchronized void connectTo(String ip, int port, String name) {
-		this.addConnection(name, new ConnectionEstablisher(ip, port, name, incoming).getConnection());
+		ConnectionEstablisher ce = new ConnectionEstablisher(ip, port, name, incoming);
+		while(ce.getConnection() == null); // since this blocks, why should I have it threaded?
+		this.addConnection(name, ce.getConnection());
 	}
 	
 	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
