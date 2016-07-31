@@ -21,17 +21,13 @@ The capsule for all objects sent over the network.
 
 The object that controls all outgoing ActionItems.
 
-### InputHandler
-
-Polls for input on System.in. Threaded.
-
 ## Package: main
 
 *The application implementation of the supporting framework.*
 
 ### Application
 
-Main class with main method.
+Main class with main method. Polls on stdIn.
 
 ## Package: network
 
