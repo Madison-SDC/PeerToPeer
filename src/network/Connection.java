@@ -33,6 +33,7 @@ public class Connection extends Thread implements Runnable {
 			} catch (Exception io) { 
 				alive = false;
 				System.out.println(connectionName + " went down.");
+				this.kill();
 			}
 		}
 	}

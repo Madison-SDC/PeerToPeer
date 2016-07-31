@@ -40,8 +40,8 @@ public class Application {
 		ar.setCurrentConnection("testLocalIncoming1");
 		
 		// await second connection
-		while(cm.getConnection("testLocalIncoming1") == null);
-		cm.listenOn(61111, "testLocalIncoming2");
+		//while(cm.getConnection("testLocalIncoming1") == null);
+		//cm.listenOn(61111, "testLocalIncoming2");
 	}
 	
 	private static void testComputer2() {
