@@ -36,14 +36,13 @@ public class SocketSender extends Thread implements Runnable{
 			connection = new Socket(ip, port);
 			in = new ObjectInputStream(connection.getInputStream());
 			out = new ObjectOutputStream(connection.getOutputStream());
-			this.start();
+			System.out.println("Connection to " + ip + " on port " + port + " established.");
 		} catch (ConnectException ce)  { 
 			System.out.println("Connection to " + ip + " on port " + port + " could not be established.");
 		} catch (IOException io) { 
 			io.printStackTrace();
 		}
 		
-		System.out.println("Connection to " + ip + " on port " + port + " established.");
 		while (running) {
 			try {
 				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));
@@ -61,7 +60,10 @@ public class SocketSender extends Thread implements Runnable{
 		} catch (IOException io) { io.printStackTrace(); }
 	}
 	
-	public boolean isConnected() { return connection.isConnected(); }
+	public boolean isConnected() { 
+		try { return connection.isConnected(); }
+		catch (Exception e) { return false; }
+	}
 	
 	public void kill() {
 		running = false;
