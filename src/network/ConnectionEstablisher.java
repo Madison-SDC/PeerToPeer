@@ -32,13 +32,13 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 		this.start();
 	}
 	
-	public void run() {
+	public synchronized void run() {
 		if (isListening) {
 			System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
 			try {
 				Socket newConnection = listeningSocket.accept();
 				System.out.println(name + " connected!");
-				cm.addConnection(new Connection(newConnection, name, cm.getIncomingQueue()));
+				cm.addConnection(name, new Connection(newConnection, name, cm.getIncomingQueue()));
 			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 		else {
@@ -46,7 +46,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 				System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 				Socket newSocket = new Socket(ip, port);
 				System.out.println(name + " connected!");
-				cm.addConnection(new Connection(newSocket, name, cm.getIncomingQueue()));
+				cm.addConnection(name, new Connection(newSocket, name, cm.getIncomingQueue()));
 			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 	}

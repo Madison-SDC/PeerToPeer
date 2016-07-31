@@ -39,7 +39,7 @@ public class ConnectionManager {
 		new ConnectionEstablisher(ip, port, name, this);
 	}
 	
-	public synchronized void addConnection(Connection conn) { allConnections.put(conn.getConnectionName(), conn); }
+	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
 	public synchronized Connection getConnection(String name) { return allConnections.get(name); }
 	
 	public SynchronousQueue<ActionItem> getOutgoingQueue() { return outgoing; }
