@@ -4,52 +4,39 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ConnectionEstablisher extends Thread implements Runnable {
+public class ConnectionEstablisher {
 	
-	private boolean isListening = false;
 	private ServerSocket listeningSocket;
 	private int port;
 	private String name;
 	private String ip;
-	private ConnectionManager cm;
+	private Connection conn;
 	
-	public ConnectionEstablisher(ServerSocket socket, String name, ConnectionManager cm) {
-		super();
+	public ConnectionEstablisher(ServerSocket socket, String name) {
 		listeningSocket = socket;
-		this.cm = cm;
 		this.name = name;
 		this.port = socket.getLocalPort();
-		isListening = true;
-		this.start();
+		
+		System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
+		try {
+			Socket newConnection = listeningSocket.accept();
+			conn = new Connection(newConnection, name, cm.getIncomingQueue());
+			System.out.println(name + " connected!");
+		} catch (IOException io) { System.out.println(io.getMessage()); }
+		
 	}
 	
 	public ConnectionEstablisher(String ip, int port, String name, ConnectionManager cm) {
-		super();
 		this.ip = ip;
 		this.port = port;
 		this.name = name;
-		this.cm = cm;
-		this.start();
+		System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
+		try {
+			Socket newSocket = new Socket(ip, port);
+			conn = new Connection(newSocket, name, cm.getIncomingQueue());
+			System.out.println(name + " connected!");
+		} catch (IOException io) { System.out.println(io.getMessage()); }
 	}
 	
-	public synchronized void run() {
-		if (isListening) {
-			System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
-			try {
-				Socket newConnection = listeningSocket.accept();
-				Connection temp = new Connection(newConnection, name, cm.getIncomingQueue());
-				cm.addConnection(name, temp);
-				System.out.println(name + " connected!");
-			} catch (IOException io) { System.out.println(io.getMessage()); }
-		}
-		else {
-			System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
-			try {
-				Socket newSocket = new Socket(ip, port);
-				Connection temp = new Connection(newSocket, name, cm.getIncomingQueue());
-				cm.addConnection(name, temp);
-				System.out.println(name + " connected!");
-			} catch (IOException io) { System.out.println(io.getMessage()); }
-		}
-	}
+	public Connection getConnection() { return conn; }
 }

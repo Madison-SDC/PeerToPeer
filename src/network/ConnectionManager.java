@@ -15,6 +15,8 @@ public class ConnectionManager {
 	SynchronousQueue<ActionItem> incoming;
 	SynchronousQueue<ActionItem> outgoing;
 	
+	ConnectionEstablisher ce;
+	
 	public ConnectionManager() {
 		allConnections = new HashMap<String, Connection>();
 		serverSockets = new HashMap<Integer, ServerSocket>();
@@ -23,13 +25,16 @@ public class ConnectionManager {
 	}
 	
 	public synchronized void listenOn(int port, String name) {
-		if (serverSockets.containsKey(port)) 
-			new ConnectionEstablisher(serverSockets.get(port), name, this);
+		if (serverSockets.containsKey(port)) {
+			ce = new ConnectionEstablisher(serverSockets.get(port), name);
+			this.addConnection(name, ce.getConnection());
+		}
 		else {
 			try { 
 				ServerSocket temp = new ServerSocket(port);
 				serverSockets.put(port, temp);
-				new ConnectionEstablisher(temp, name, this);
+				ce = new ConnectionEstablisher(temp, name);
+				this.addConnection(name, ce.getConnection());
 			}
 			catch (IOException io) { io.printStackTrace(); }
 		}
