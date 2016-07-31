@@ -30,8 +30,15 @@ public class ActionRouter extends Thread implements Runnable{
 	}
 	
 	private void sendActionObject(ActionItem a) {
-		if (currentConnectionType == 0) currentListeningConnection.sendObject(a);
-		else currentSendingConnection.sendObject(a);
+		if (currentConnectionType == 0) {
+			if (currentListeningConnection.isConnected()) currentListeningConnection.sendObject(a);
+			else System.out.println("Your current selected connection is dead!");
+		}
+		if (currentConnectionType == 1) {
+			if (currentSendingConnection.isConnected()) currentSendingConnection.sendObject(a);
+			else System.out.println("Your current selected connection is dead!");
+		}
+			
 	}
 	
 	private void broadcastActionObject(ActionItem a) {
