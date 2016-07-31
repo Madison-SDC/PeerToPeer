@@ -32,7 +32,7 @@ public class ActionRouter extends Thread implements Runnable {
 	private synchronized void sendActionObject(ActionItem a) {
 		if (a.willBroadcast()) { broadcastActionObject(a); return; }
 		if (currConnection.isConnected()) {
-			System.out.print("Sending to: " + currentSelectedConnection + " . . . ");
+			System.out.print("Sending to: " + currConnection.getConnectionName() + " . . . ");
 			currConnection.sendObject(a);
 		}
 		else System.out.println("Current connection is down!");
