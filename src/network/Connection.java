@@ -19,7 +19,7 @@ public class Connection extends Thread implements Runnable {
 	private Object curr;
 	private String connectionName;
 	
-	public Connection(Socket conn, String connectionName, SynchronousQueue<ActionItem> incoming) {
+	public Connection(Socket conn, String connectionName, SynchronousQueue<ActionItem> incoming) throws IOException {
 		super();
 		try {
 			this.conn = conn;
@@ -28,7 +28,7 @@ public class Connection extends Thread implements Runnable {
 			in = new ObjectInputStream(conn.getInputStream());
 			out = new ObjectOutputStream(conn.getOutputStream());
 			this.start();
-		} catch (IOException io) { io.printStackTrace(); }
+		} catch (IOException io) { throw new IOException("Could not establish connection '" + connectionName + "'."); }
 	}
 	
 	public void run() {

@@ -39,7 +39,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 				Socket newConnection = listeningSocket.accept();
 				System.out.println(name + " connected!");
 				cm.addConnection(new Connection(newConnection, name, cm.getIncomingQueue()));
-			} catch (IOException io) { io.printStackTrace(); }
+			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 		else {
 			try {
@@ -47,7 +47,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 				Socket newSocket = new Socket(ip, port);
 				System.out.println(name + " connected!");
 				cm.addConnection(new Connection(newSocket, name, cm.getIncomingQueue()));
-			} catch (IOException io) { io.printStackTrace(); }
+			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 	}
 }
