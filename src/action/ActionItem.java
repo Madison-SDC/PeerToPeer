@@ -13,5 +13,4 @@ public class ActionItem implements Serializable {
 	public String toString() {
 		return action.toString();
 	}
-	
 }

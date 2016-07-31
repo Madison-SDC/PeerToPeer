@@ -15,9 +15,8 @@ public class ActionExecutor extends Thread implements Runnable {
 	}
 	
 	public void run() {
-		while (running) {
+		while (running) 
 			while ((curr = events.poll()) != null) executeEvent(curr);
-		}
 	}
 	
 	private void executeEvent(ActionItem event) {

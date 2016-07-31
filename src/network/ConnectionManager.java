@@ -10,7 +10,6 @@ import action.ActionItem;
 public class ConnectionManager {
 	
 	// One instance of a ServerSocket per port listening
-	//HashMap<String, ServerSocket> incomingNamed;
 	HashMap<Integer, ServerSocket> incomingPort;
 	
 	// Keeps track of all active connections, multiple can be on one port
@@ -39,7 +38,6 @@ public class ConnectionManager {
 		incomingQueue = new SynchronousQueue<ActionItem>();
 		outgoingQueue = new SynchronousQueue<ActionItem>();
 		portmap = new HashMap<String, Integer>();
-		//incomingNamed = new HashMap<String, ServerSocket>();
 		incomingPort = new HashMap<Integer, ServerSocket>();
 		activeIncomingConnections = new HashMap<String, SocketListener>();
 		activeOutgoingConnections = new HashMap<String, SocketSender>();
@@ -104,10 +102,8 @@ public class ConnectionManager {
 	}
 	
 	public int getConnectionType(String connectionName) { return connectionType.get(connectionName); }
-	
 	public SocketListener getListeningConnection(String connection) { return activeIncomingConnections.get(connection); }
 	public SocketSender getSendingConnection(String connection) { return activeOutgoingConnections.get(connection); }
-	
 	public SynchronousQueue<ActionItem> getIncomingQueue() { return incomingQueue; }
 	public SynchronousQueue<ActionItem> getOutgoingQueue() { return outgoingQueue; }
 	

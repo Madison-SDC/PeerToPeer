@@ -39,7 +39,6 @@ public class ActionRouter extends Thread implements Runnable{
 			if (currentSendingConnection.isConnected()) currentSendingConnection.sendObject(a);
 			else System.out.println("Your current selected connection is dead, or not established yet!");
 		}
-			
 	}
 	
 	private void broadcastActionObject(ActionItem a) {
@@ -55,8 +54,6 @@ public class ActionRouter extends Thread implements Runnable{
 		
 		// Was established via Socket
 		else currentSendingConnection = cm.getSendingConnection(connection);
-			
-		
 	}
 	public String getCurrentConnectionString() { return currentSelectedConnection; }
 	
