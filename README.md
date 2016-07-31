@@ -2,7 +2,7 @@
 
 Contributors: Vaughn Kottler
 
-A peer-to-peer model object transfer framework.
+*A peer-to-peer model object transfer framework.*
 
 ## Package: action
 
@@ -27,7 +27,7 @@ Polls for input on System.in. Threaded.
 
 ## Package: main
 
-The application implementation of the supporting framework.
+*The application implementation of the supporting framework.*
 
 ### Application
 
@@ -35,19 +35,17 @@ Main class with main method.
 
 ## Package: network
 
-For handling the opening and graceful closing of socket communication.
+*For handling the opening and graceful closing of socket communication.*
 
 ### ConnectionManager
 
 Keeps track of all connections and allows you to open new ones.
 
-### SocketListener
+### ConnectionEstablisher
 
-Opens a ServerSocket if one doesn't exist for the port, then polls for incoming traffic   
-on the resulting Socket. Threaded.
+Handles the initialization of Sockets, whether the connection is being initialized from a ServerSocket or not.
 
-### SocketSender 
+### Connection
 
-Attempts to establish a connection to an ip & port pair (can timeout)   
-then polls for incoming traffic. Threaded.
+Threaded. Polling on the ObjectInputStream, has the ability to write output over ObjectOuputStream.
 
