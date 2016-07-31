@@ -37,21 +37,21 @@ public class Application {
 		
 		// await first connection
 		cm.listenOn(61111, "testLocalIncoming1");
-		ar.setCurrentConnection("testLocalIncoming1", 0);
-		while (!cm.getListeningConnection("testLocalIncoming1").isConnected());
+		ar.setCurrentConnection("testLocalIncoming1");
+		while (!cm.getConnection("testLocalIncoming1").isConnected());
 		
 		// await second connection
 		cm.listenOn(61111, "testLocalIncoming2");
-		while (!cm.getListeningConnection("testLocalIncoming2").isConnected());
+		while (!cm.getConnection("testLocalIncoming2").isConnected());
 	}
 	
 	private static void testComputer2() {
 		cm.connectTo("10.0.0.12", 61111, "testOutgoing");
-		ar.setCurrentConnection("testOutgoing", 1);
+		ar.setCurrentConnection("testOutgoing");
 	}
 	
 	private static void testComputer3() {
 		cm.connectTo("10.0.0.12", 61111, "testOutgoing");
-		ar.setCurrentConnection("testOutgoing", 1);
+		ar.setCurrentConnection("testOutgoing");
 	}
 }
