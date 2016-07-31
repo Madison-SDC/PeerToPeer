@@ -9,7 +9,7 @@ import java.util.concurrent.SynchronousQueue;
 
 import action.ActionItem;
 
-public class ConnectionEstablisher {
+public class ConnectionEstablisher extends Thread implements Runnable {
 	
 	private ServerSocket listeningSocket;
 	private int port;
@@ -17,6 +17,8 @@ public class ConnectionEstablisher {
 	private String ip;
 	private Connection conn;
 	private Socket initialSocket;
+	private boolean listening = false;
+	private SynchronousQueue<ActionItem> incoming;
 	
 	/**
 	 * For connections initialized with a ServerSocket.
@@ -25,18 +27,14 @@ public class ConnectionEstablisher {
 	 * @param incoming
 	 */
 	public ConnectionEstablisher(ServerSocket socket, String name, SynchronousQueue<ActionItem> incoming) {
+		super();
 		listeningSocket = socket;
 		this.name = name;
 		this.port = socket.getLocalPort();
+		this.incoming = incoming;
+		listening = true;
 		System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
-		try {
-			Socket newConnection = listeningSocket.accept(); // blocking
-			ObjectOutputStream out = new ObjectOutputStream(newConnection.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
-			conn = new Connection(out, in, name, incoming);
-			System.out.println(name + " connected!");
-		} catch (IOException io) { System.out.println(io.getMessage()); }
-		
+		this.start();	
 	}
 	
 	/**
@@ -47,17 +45,34 @@ public class ConnectionEstablisher {
 	 * @param incoming
 	 */
 	public ConnectionEstablisher(String ip, int port, String name, SynchronousQueue<ActionItem> incoming) {
+		super();
 		this.ip = ip;
 		this.port = port;
 		this.name = name;
+		this.incoming = incoming;
 		System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
-		try {
-			initialSocket = new Socket(ip, port); // blocking?
-			ObjectOutputStream out = new ObjectOutputStream(initialSocket.getOutputStream());
-			ObjectInputStream in = new ObjectInputStream(initialSocket.getInputStream());
-			conn = new Connection(out, in, name, incoming);
-			System.out.println(name + " connected!");
-		} catch (IOException io) { System.out.println(io.getMessage()); }
+		this.start();
+	}
+	
+	public void run() {
+		if (listening) {
+			try {
+				Socket newConnection = listeningSocket.accept(); // blocking
+				ObjectOutputStream out = new ObjectOutputStream(newConnection.getOutputStream());
+				ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
+				conn = new Connection(out, in, name, incoming);
+				System.out.println(name + " connected!");
+			} catch (IOException io) { System.out.println(io.getMessage()); }
+		}
+		else {
+			try {
+				initialSocket = new Socket(ip, port); // blocking?
+				ObjectOutputStream out = new ObjectOutputStream(initialSocket.getOutputStream());
+				ObjectInputStream in = new ObjectInputStream(initialSocket.getInputStream());
+				conn = new Connection(out, in, name, incoming);
+				System.out.println(name + " connected!");
+			} catch (IOException io) { System.out.println(io.getMessage()); }
+		}
 	}
 	
 	public Connection getConnection() { return conn; }
