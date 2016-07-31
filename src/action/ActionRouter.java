@@ -30,13 +30,14 @@ public class ActionRouter extends Thread implements Runnable{
 	}
 	
 	private void sendActionObject(ActionItem a) {
+		System.out.print("Sending to: " + currentSelectedConnection + " . . . ");
 		if (currentConnectionType == 0) {
 			if (currentListeningConnection.isConnected()) currentListeningConnection.sendObject(a);
-			else System.out.println("Your current selected connection is dead!");
+			else System.out.println("Your current selected connection is dead, or not established yet!");
 		}
 		if (currentConnectionType == 1) {
 			if (currentSendingConnection.isConnected()) currentSendingConnection.sendObject(a);
-			else System.out.println("Your current selected connection is dead!");
+			else System.out.println("Your current selected connection is dead, or not established yet!");
 		}
 			
 	}
