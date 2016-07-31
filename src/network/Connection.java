@@ -25,13 +25,16 @@ public class Connection extends Thread implements Runnable {
 			this.conn = conn;
 			this.connectionName = connectionName;
 			this.queue = incoming;
+			System.out.println("Initializing " + connectionName + ".");
 			in = new ObjectInputStream(conn.getInputStream());
 			out = new ObjectOutputStream(conn.getOutputStream());
+			System.out.println("Connection " + " initialized.");
 			this.start();
 		} catch (IOException io) { throw new IOException("Could not establish connection '" + connectionName + "'."); }
 	}
 	
 	public void run() {
+		System.out.println("A listening thread has been started.");
 		while (alive) {
 			try {
 				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));
@@ -43,8 +46,7 @@ public class Connection extends Thread implements Runnable {
 	}
 	
 	public void sendObject(Object e) {
-		try {
-			out.writeObject(e);
+		try { out.writeObject(e);
 		} catch (IOException io) { io.printStackTrace(); }
 	}
 	
