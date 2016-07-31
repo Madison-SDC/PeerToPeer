@@ -10,7 +10,7 @@ import java.util.concurrent.SynchronousQueue;
 import action.ActionItem;
 
 public class ConnectionEstablisher extends Thread implements Runnable {
-	
+
 	private ServerSocket listeningSocket;
 	private int port;
 	private String name;
@@ -18,8 +18,9 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 	private Connection conn;
 	private Socket initialSocket;
 	private boolean listening = false;
+	private boolean obtained = false;
 	private SynchronousQueue<ActionItem> incoming;
-	
+
 	/**
 	 * For connections initialized with a ServerSocket.
 	 * @param socket
@@ -36,7 +37,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 		System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
 		this.start();	
 	}
-	
+
 	/**
 	 * For connections initialized by requests.
 	 * @param ip
@@ -53,7 +54,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 		System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 		this.start();
 	}
-	
+
 	public void run() {
 		if (listening) {
 			try {
@@ -73,8 +74,13 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 				System.out.println(name + " connected!");
 			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
+		while (!obtained);
+	}
+
+	public Connection getConnection() { 
+		obtained = true;
+		return conn;
 	}
 	
-	public Connection getConnection() { return conn; }
 	public Socket getSocket() { return initialSocket; }
 }
