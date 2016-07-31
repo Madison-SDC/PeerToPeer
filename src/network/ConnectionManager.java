@@ -25,20 +25,22 @@ public class ConnectionManager {
 	}
 	
 	public synchronized void listenOn(int port, String name) {
+		ConnectionEstablisher ce;
+		ServerSocket tempSock = null;
 		
 		// We already have a ServerSocket on this port
-		if (serverSockets.containsKey(port)) 
-			this.addConnection(name, new ConnectionEstablisher(serverSockets.get(port), name, incoming).getConnection());
+		if (serverSockets.containsKey(port)) tempSock = serverSockets.get(port);
 		
 		// Make a new ServerSocket on this Port
 		else {
 			try { 
-				ServerSocket tempSock = new ServerSocket(port);
+				tempSock = new ServerSocket(port);
 				serverSockets.put(port, tempSock);
-				this.addConnection(name, new ConnectionEstablisher(tempSock, name, incoming).getConnection());
-			}
-			catch (IOException io) { io.printStackTrace(); }
+			} catch (IOException io) { io.printStackTrace(); }
 		}
+		ce = new ConnectionEstablisher(tempSock, name, incoming);
+		while(ce.getConnection() == null); // since this blocks, why should I have it threaded?
+		this.addConnection(name, ce.getConnection());
 	}
 	
 	public synchronized void connectTo(String ip, int port, String name) {
