@@ -28,12 +28,12 @@ public class Connection extends Thread implements Runnable {
 	}
 	
 	public void run() {
-		System.out.println("Attempting to start listening thread for '" + connectionName + "'.");
+		//System.out.println("Attempting to start listening thread for '" + connectionName + "'.");
 		try {
 			in = new ObjectInputStream(conn.getInputStream());
 			out = new ObjectOutputStream(conn.getOutputStream());
 		} catch (IOException io) { io.printStackTrace(); }
-		System.out.println("A listening thread has been started.");
+		//System.out.println("A listening thread has been started.");
 		while (alive) {
 			try {
 				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));
