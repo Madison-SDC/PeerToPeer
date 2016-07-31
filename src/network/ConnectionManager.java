@@ -10,7 +10,8 @@ import action.ActionItem;
 public class ConnectionManager {
 	
 	// One instance of a ServerSocket per port listening
-	HashMap<String, ServerSocket> incoming;
+	//HashMap<String, ServerSocket> incomingNamed;
+	HashMap<Integer, ServerSocket> incomingPort;
 	
 	// Keeps track of all active connections, multiple can be on one port
 	HashMap<String, SocketListener> activeIncomingConnections;
@@ -38,7 +39,8 @@ public class ConnectionManager {
 		incomingQueue = new SynchronousQueue<ActionItem>();
 		outgoingQueue = new SynchronousQueue<ActionItem>();
 		portmap = new HashMap<String, Integer>();
-		incoming = new HashMap<String, ServerSocket>();
+		//incomingNamed = new HashMap<String, ServerSocket>();
+		incomingPort = new HashMap<Integer, ServerSocket>();
 		activeIncomingConnections = new HashMap<String, SocketListener>();
 		activeOutgoingConnections = new HashMap<String, SocketSender>();
 		connectionType = new HashMap<String, Integer>();
@@ -46,24 +48,27 @@ public class ConnectionManager {
 	}
 	
 	public void listenOn(int port, String connectionName) {
-		if (incoming.containsKey(connectionName)) {
+		if (activeIncomingConnections.containsKey(connectionName)) {
 			System.out.println("Connection named " + connectionName + " already exists!");
 			return;
 		}
 		
 		// poll for a new connection on an existing ServerSocket/port
-		if (incoming.get(port) != null) {
-			activeIncomingConnections.put(connectionName, new SocketListener(incoming.get(port), incomingQueue, connectionName));
+		if (incomingPort.get(port) != null) {
+			activeIncomingConnections.put(connectionName, new SocketListener(incomingPort.get(port), incomingQueue, connectionName));
+			connectionType.put(connectionName, 0);
 			numConnections.put(port, numConnections.get(port) + 1);
+			portmap.put(connectionName, port);
+			return;
 		}
 		
 		// poll for a connection on a new port/ServerSocket
 		try {
-			ServerSocket newPort = new ServerSocket(port);
-			newPort.setReuseAddress(true);
-			incoming.put(connectionName, newPort);
+			ServerSocket newServerSocket = new ServerSocket(port);
+			newServerSocket.setReuseAddress(true);
+			incomingPort.put(port, newServerSocket);
 			portmap.put(connectionName, port);
-			activeIncomingConnections.put(connectionName, new SocketListener(newPort, incomingQueue, connectionName));
+			activeIncomingConnections.put(connectionName, new SocketListener(newServerSocket, incomingQueue, connectionName));
 			connectionType.put(connectionName, 0);
 			numConnections.put(port, 1);
 		} catch (IOException e) { e.printStackTrace(); }
