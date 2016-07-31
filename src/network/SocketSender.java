@@ -3,6 +3,7 @@ package network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.concurrent.SynchronousQueue;
 
@@ -32,10 +33,10 @@ public class SocketSender extends Thread implements Runnable{
 			in = new ObjectInputStream(connection.getInputStream());
 			out = new ObjectOutputStream(connection.getOutputStream());
 			this.start();
-		} catch (IOException io) { 
-			//io.printStackTrace();
+		} catch (ConnectException ce)  { 
 			System.out.println("Connection to " + ip + " on port " + port + " could not be established.");
-			// how should we handle this?
+		} catch (IOException io) { 
+			io.printStackTrace();
 		}
 	}
 	
