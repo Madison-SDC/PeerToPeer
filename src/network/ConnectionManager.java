@@ -47,6 +47,10 @@ public class ConnectionManager {
 		this.addConnection(name, ce.getConnection());
 	}
 	
+	public void closeAllConnections() {
+		System.out.println("not implemented yet");
+	}
+	
 	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
 	public Connection getConnection(String name) { return allConnections.get(name); }
 	

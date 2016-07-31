@@ -40,10 +40,18 @@ public class Application {
 	}
 	
 	private static void processInput(String in) {
-		if (in.equals("quit")) { running = false; return; }
+		if (in.equals("quit")) { shutdown(); }
 		System.out.println("Processing: " + in);
 		try { userInput.put(new ActionItem(in)); } 
 		catch (InterruptedException ie) { ie.printStackTrace(); }
+	}
+	
+	private static void shutdown() {
+		running = false;
+		try { stdIn.close(); } catch (IOException io) { io.printStackTrace(); } 
+		cm.closeAllConnections();
+		System.exit(1); // is the above necessary?
+		// anything else?
 	}
 	
 	private static void testComputer1() {
