@@ -1,5 +1,6 @@
 package action;
 
+import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 
@@ -50,15 +51,11 @@ public class ActionRouter extends Thread implements Runnable {
 				currConnection.sendObject(a);
 				return true;
 			}
-			else {
-				System.out.println("That connection is dead.");
-				return false;
-			}
-		}
-		catch (NullPointerException npe) { 
+			else System.out.println("That connection is dead.");
+		} catch (NullPointerException npe) { 
 			System.out.println("Connection '" + currentSelectedConnection + "' is either dead not not up yet!");
-			return false;
-		}
+		} catch (Exception se) { System.out.println(se.getMessage()); }
+		return false;
 	}
 
 	private boolean broadcastActionObject(ActionItem a) {

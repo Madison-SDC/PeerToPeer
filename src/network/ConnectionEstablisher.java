@@ -18,13 +18,19 @@ public class ConnectionEstablisher {
 	private Connection conn;
 	private Socket initialSocket;
 	
+	/**
+	 * For connections initialized with a ServerSocket.
+	 * @param socket
+	 * @param name
+	 * @param incoming
+	 */
 	public ConnectionEstablisher(ServerSocket socket, String name, SynchronousQueue<ActionItem> incoming) {
 		listeningSocket = socket;
 		this.name = name;
 		this.port = socket.getLocalPort();
 		System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
 		try {
-			Socket newConnection = listeningSocket.accept();
+			Socket newConnection = listeningSocket.accept(); // blocking
 			ObjectOutputStream out = new ObjectOutputStream(newConnection.getOutputStream());
 			ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
 			conn = new Connection(out, in, name, incoming);
@@ -33,13 +39,20 @@ public class ConnectionEstablisher {
 		
 	}
 	
+	/**
+	 * For connections initialized by requests.
+	 * @param ip
+	 * @param port
+	 * @param name
+	 * @param incoming
+	 */
 	public ConnectionEstablisher(String ip, int port, String name, SynchronousQueue<ActionItem> incoming) {
 		this.ip = ip;
 		this.port = port;
 		this.name = name;
 		System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 		try {
-			initialSocket = new Socket(ip, port);
+			initialSocket = new Socket(ip, port); // blocking?
 			ObjectOutputStream out = new ObjectOutputStream(initialSocket.getOutputStream());
 			ObjectInputStream in = new ObjectInputStream(initialSocket.getInputStream());
 			conn = new Connection(out, in, name, incoming);
