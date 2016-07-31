@@ -38,9 +38,9 @@ public class ActionRouter extends Thread implements Runnable{
 		
 	}
 	
-	public synchronized void setCurrentConnection(String connection) { 
+	public synchronized void setCurrentConnection(String connection, int connectionType) { 
 		currentSelectedConnection = connection;
-		currentConnectionType = cm.getConnectionType(connection);
+		currentConnectionType = connectionType;
 		
 		// Was established via ServerSocket
 		if (currentConnectionType == 0) currentListeningConnection = cm.getListeningConnection(connection);

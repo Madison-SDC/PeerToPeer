@@ -37,7 +37,7 @@ public class Application {
 		
 		// await first connection
 		cm.listenOn(61111, "testLocalIncoming1");
-		ar.setCurrentConnection("testLocalIncoming1");
+		ar.setCurrentConnection("testLocalIncoming1", 0);
 		while (!cm.getListeningConnection("testLocalIncoming1").isConnected());
 		
 		// await second connection
@@ -47,9 +47,11 @@ public class Application {
 	
 	private static void testComputer2() {
 		cm.connectTo("10.0.0.12", 61111, "testOutgoing");
+		ar.setCurrentConnection("testOutgoing", 1);
 	}
 	
 	private static void testComputer3() {
 		cm.connectTo("10.0.0.12", 61111, "testOutgoing");
+		ar.setCurrentConnection("testOutgoing", 1);
 	}
 }
