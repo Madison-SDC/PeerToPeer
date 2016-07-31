@@ -26,14 +26,14 @@ public class ConnectionManager {
 	
 	public synchronized void listenOn(int port, String name) {
 		if (serverSockets.containsKey(port)) {
-			ce = new ConnectionEstablisher(serverSockets.get(port), name);
+			ce = new ConnectionEstablisher(serverSockets.get(port), name, incoming);
 			this.addConnection(name, ce.getConnection());
 		}
 		else {
 			try { 
 				ServerSocket temp = new ServerSocket(port);
 				serverSockets.put(port, temp);
-				ce = new ConnectionEstablisher(temp, name);
+				ce = new ConnectionEstablisher(temp, name, incoming);
 				this.addConnection(name, ce.getConnection());
 			}
 			catch (IOException io) { io.printStackTrace(); }
@@ -41,7 +41,7 @@ public class ConnectionManager {
 	}
 	
 	public synchronized void connectTo(String ip, int port, String name) {
-		new ConnectionEstablisher(ip, port, name, this);
+		new ConnectionEstablisher(ip, port, name, incoming);
 	}
 	
 	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
