@@ -21,17 +21,18 @@ public class Connection extends Thread implements Runnable {
 	
 	public Connection(Socket conn, String connectionName, SynchronousQueue<ActionItem> incoming) throws IOException {
 		super();
-		try {
-			this.conn = conn;
-			this.connectionName = connectionName;
-			this.queue = incoming;
-			in = new ObjectInputStream(conn.getInputStream());
-			out = new ObjectOutputStream(conn.getOutputStream());
-			this.start();
-		} catch (IOException io) { throw new IOException("Could not establish connection '" + connectionName + "'."); }
+		this.conn = conn;
+		this.connectionName = connectionName;
+		this.queue = incoming;
+		this.start();
 	}
 	
 	public void run() {
+		System.out.println("Attempting to start listening thread for '" + connectionName + "'.");
+		try {
+			in = new ObjectInputStream(conn.getInputStream());
+			out = new ObjectOutputStream(conn.getOutputStream());
+		} catch (IOException io) { io.printStackTrace(); }
 		System.out.println("A listening thread has been started.");
 		while (alive) {
 			try {
