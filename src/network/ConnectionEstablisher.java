@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import action.ActionItem;
 
 public class ConnectionEstablisher extends Thread implements Runnable {
-
+/*
 	private ServerSocket listeningSocket;
 	private int port;
 	private String name;
@@ -22,12 +22,6 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 	private boolean obtained = false;
 	private LinkedBlockingQueue<ActionItem> incoming;
 
-	/**
-	 * For connections initialized with a ServerSocket.
-	 * @param socket
-	 * @param name
-	 * @param incoming
-	 */
 	public ConnectionEstablisher(ServerSocket socket, String name, LinkedBlockingQueue<ActionItem> incoming) {
 		super();
 		listeningSocket = socket;
@@ -39,13 +33,6 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 		this.start();	
 	}
 
-	/**
-	 * For connections initialized by requests.
-	 * @param ip
-	 * @param port
-	 * @param name
-	 * @param incoming
-	 */
 	public ConnectionEstablisher(String ip, int port, String name, LinkedBlockingQueue<ActionItem> incoming) {
 		super();
 		this.ip = ip;
@@ -60,10 +47,10 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 		if (listening) {
 			try {
 				Socket newConnection = listeningSocket.accept();
-				ObjectOutputStream out = new ObjectOutputStream(newConnection.getOutputStream());
-				ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
-				conn = new Connection(out, in, name, incoming);
-				System.out.println(name + " connected!");
+				//ObjectOutputStream out = new ObjectOutputStream(newConnection.getOutputStream());
+				//ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
+				//conn = new Connection(out, in, name, incoming);
+				//System.out.println(name + " connected!");
 			} catch (IOException io) { System.out.println(io.getMessage()); }
 		}
 		else {
@@ -84,4 +71,5 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 	}
 	
 	public Socket getSocket() { return initialSocket; }
+*/
 }

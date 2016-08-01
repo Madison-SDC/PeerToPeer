@@ -1,7 +1,9 @@
 package network;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -11,7 +13,7 @@ public class ConnectionManager {
 
 	HashMap<String, Connection> allConnections;
 	HashMap<Integer, ServerSocket> serverSockets;
-	HashMap<String, ConnectionEstablisher> connectionChecker;
+	//HashMap<String, ConnectionEstablisher> connectionChecker;
 	
 	LinkedBlockingQueue<ActionItem> incoming;
 	LinkedBlockingQueue<ActionItem> outgoing;
@@ -19,7 +21,7 @@ public class ConnectionManager {
 	public ConnectionManager() {
 		allConnections = new HashMap<String, Connection>();
 		serverSockets = new HashMap<Integer, ServerSocket>();
-		connectionChecker = new HashMap<String, ConnectionEstablisher>();
+		//connectionChecker = new HashMap<String, ConnectionEstablisher>();
 		incoming = new LinkedBlockingQueue<ActionItem>();
 		outgoing = new LinkedBlockingQueue<ActionItem>();
 	}
@@ -38,13 +40,15 @@ public class ConnectionManager {
 				serverSockets.put(port, tempSock);
 			} catch (IOException io) { io.printStackTrace(); }
 		}
-		ce = new ConnectionEstablisher(tempSock, name, incoming);
-		connectionChecker.put(name, ce);
+		allConnections.put(name, new Connection(tempSock, name, incoming));
 	}
 	
 	public synchronized void connectTo(String ip, int port, String name) {
-		ConnectionEstablisher ce = new ConnectionEstablisher(ip, port, name, incoming);
-		connectionChecker.put(name, ce);
+		try {
+			allConnections.put(name, new Connection(new Socket(InetAddress.getByName(ip), port), name, incoming));
+		} catch (Exception e) { e.printStackTrace(); }
+		//ConnectionEstablisher ce = new ConnectionEstablisher(ip, port, name, incoming);
+		//connectionChecker.put(name, ce);
 	}
 	
 	public void closeAllConnections() {
@@ -52,8 +56,11 @@ public class ConnectionManager {
 	}
 	
 	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
-	public Connection getConnection(String name) {
+	
+	public synchronized Connection getConnection(String name) {
+		return allConnections.get(name);
 		
+		/*
 		// Connection has been retrieved & established
 		if (allConnections.containsKey(name)) return allConnections.get(name);
 		
@@ -67,6 +74,7 @@ public class ConnectionManager {
 		allConnections.put(name, temp);
 		connectionChecker.remove(name);
 		return temp;
+		*/
 	}
 	
 	public LinkedBlockingQueue<ActionItem> getOutgoingQueue() { return outgoing; }
