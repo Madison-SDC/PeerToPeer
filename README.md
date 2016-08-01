@@ -2,16 +2,16 @@
 
 Contributors: Vaughn Kottler
 
-*A peer-to-peer model object transfer framework.*
+*A peer-to-peer model, event-driven object transfer framework. A drop in for multiplayer games!*   
+*supports the use of internet addresses, but may require port forwarding. This issue is being looked into.*
 
 ## Package: action
 
-Handling user input, routing action objects to their   
-destinations and executing incoming objects.
+Routes action objects to their destinations and executes on incoming objects.
 
 ### ActionExecutor
 
-Polling on peek() of SynchonousQueue for ActionItems. Threaded. 
+Non-expensive polling using peek() on LinkedBlockingQueue for ActionItems. Threaded. 
 
 ### ActionItem
 
@@ -19,7 +19,8 @@ The capsule for all objects sent over the network.
 
 ### ActionRouter
 
-The object that controls all outgoing ActionItems.
+The object that controls all outgoing ActionItems. Threaded and polls on an outgoing LinkedBlockingQueue   
+(not expensive).
 
 ## Package: main
 
@@ -27,7 +28,7 @@ The object that controls all outgoing ActionItems.
 
 ### Application
 
-Main class with main method. Polls on stdIn.
+Main class with main method. Polls on stdIn (MOST EXPENSIVE BY FAR).
 
 ## Package: network
 
