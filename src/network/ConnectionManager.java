@@ -27,7 +27,7 @@ public class ConnectionManager {
 	}
 	
 	public synchronized void listenOn(int port, String name) {
-		ConnectionEstablisher ce;
+		//ConnectionEstablisher ce;
 		ServerSocket tempSock = null;
 		
 		// We already have a ServerSocket on this port
@@ -40,10 +40,12 @@ public class ConnectionManager {
 				serverSockets.put(port, tempSock);
 			} catch (IOException io) { io.printStackTrace(); }
 		}
+		System.out.println("Awaiting connection '" + name + "' on port " + port + ".");
 		allConnections.put(name, new Connection(tempSock, name, incoming));
 	}
 	
 	public synchronized void connectTo(String ip, int port, String name) {
+		System.out.println("Attempting to establish '" + name + "' to " + ip + " on port " + port + ".");
 		try {
 			allConnections.put(name, new Connection(new Socket(InetAddress.getByName(ip), port), name, incoming));
 		} catch (Exception e) { e.printStackTrace(); }
@@ -54,8 +56,6 @@ public class ConnectionManager {
 	public void closeAllConnections() {
 		System.out.println("not implemented yet");
 	}
-	
-	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
 	
 	public synchronized Connection getConnection(String name) {
 		return allConnections.get(name);
