@@ -15,7 +15,6 @@ public class ActionRouter extends Thread implements Runnable {
 	private ActionItem curr;
 	private Connection currConnection;
 
-
 	public ActionRouter(LinkedBlockingQueue<ActionItem> queue, ConnectionManager cm) {
 		super();
 		this.queue = queue;
@@ -24,37 +23,22 @@ public class ActionRouter extends Thread implements Runnable {
 	}
 
 	public void run() {
-		int tries = 5;
-		while (true) {
-			while ((curr = queue.poll()) != null) {
-				tries = 5;
-				while (!sendActionObject(curr) && tries > 0) {
-					mySleep(500); 
-					System.out.print("Retry " + tries + " . . . ");
-					tries--;
-				}
-			}
-		}
+		while (true) while ((curr = queue.poll()) != null) sendActionObject(curr);
 	}
 
-	private static void mySleep(int time) {
-		try { Thread.sleep(time); } catch (InterruptedException ie) { ie.printStackTrace(); }
-	}
-
-	private synchronized boolean sendActionObject(ActionItem a) {
-		if (a.willBroadcast()) { return broadcastActionObject(a); }
+	private synchronized void sendActionObject(ActionItem a) {
+		if (a.willBroadcast()) { broadcastActionObject(a); return; }
 		currConnection = cm.getConnection(currentSelectedConnection);
-		if (currConnection == null) {
-			System.out.println("'" + currentSelectedConnection + "' does not exist!");
-			return false;
-		}
-		if (currConnection.isConnected()) {
-			currConnection.sendObject(a);
-			return true;
-		}
+		if (currConnection == null) System.out.println("'" + currentSelectedConnection + "' does not exist!");
 		else {
-			System.out.println("'" + currentSelectedConnection + "' not connected yet!");
-			return false;
+			if (currConnection.isConnected()) currConnection.sendObject(a);
+			else {
+				if (currConnection.isDead()) {
+					System.out.println("'" + currentSelectedConnection + "' was dead. I am removing it.");
+					cm.closeConnection(currentSelectedConnection);
+				}
+				else System.out.println("'" + currentSelectedConnection + "' not connected yet!");
+			}
 		}
 	}
 
@@ -65,5 +49,4 @@ public class ActionRouter extends Thread implements Runnable {
 
 	public void setCurrentConnection(String name) { currentSelectedConnection = name; }
 	public String getCurrentConnectionName() { return currentSelectedConnection; }
-
 }

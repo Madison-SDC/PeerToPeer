@@ -13,6 +13,7 @@ public class Connection extends Thread implements Runnable {
 
 	private boolean alive = false;
 	private boolean fromListening = false;
+	private boolean died = false;
 	private LinkedBlockingQueue<ActionItem> queue;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
@@ -67,6 +68,7 @@ public class Connection extends Thread implements Runnable {
 
 	public void kill() {
 		alive = false;
+		died = true;
 		try { 
 			out.close();
 			in.close();
@@ -75,4 +77,5 @@ public class Connection extends Thread implements Runnable {
 
 	public String getConnectionName() { return connectionName; }
 	public boolean isConnected() { return alive; }
+	public boolean isDead() { return died; }
 }

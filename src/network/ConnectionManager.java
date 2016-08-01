@@ -52,6 +52,7 @@ public class ConnectionManager {
 	}
 	
 	public Connection getConnection(String name) { return allConnections.get(name); }
+	public void closeConnection(String name) { allConnections.remove(name); }
 	public LinkedBlockingQueue<ActionItem> getOutgoingQueue() { return outgoing; }
 	public LinkedBlockingQueue<ActionItem> getIncomingQueue() { return incoming; }
 	

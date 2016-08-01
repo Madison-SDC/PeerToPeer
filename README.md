@@ -37,10 +37,6 @@ Main class with main method. Polls on stdIn.
 
 Keeps track of all connections and allows you to open new ones.
 
-### ConnectionEstablisher
-
-Handles the initialization of Sockets, whether the connection is being initialized from a ServerSocket or not.
-
 ### Connection
 
 Threaded. Polling on the ObjectInputStream, has the ability to write output over ObjectOuputStream.
