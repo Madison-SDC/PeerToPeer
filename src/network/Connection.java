@@ -11,7 +11,7 @@ import action.ActionItem;
 
 public class Connection extends Thread implements Runnable {
 
-	private boolean alive = true;
+	private boolean alive = false;
 	private boolean fromListening = false;
 	private LinkedBlockingQueue<ActionItem> queue;
 	private ObjectOutputStream out;
@@ -20,23 +20,13 @@ public class Connection extends Thread implements Runnable {
 	private Socket sock;
 	private ServerSocket serverSock;
 	private String connectionName;
-
-	/*
-	public Connection(ObjectOutputStream out, ObjectInputStream in, String name, LinkedBlockingQueue<ActionItem> incoming) throws IOException {
-		super();
-		this.connectionName = name;
-		this.queue = incoming;
-		this.out = out;
-		this.in = in;
-		this.start();
-	}
-	*/
 	
 	public Connection(Socket socket, String name, LinkedBlockingQueue<ActionItem> incoming) {
 		super();
 		this.connectionName = name;
 		this.queue = incoming;
 		this.sock = socket;
+		this.start();
 	}
 	
 	public Connection(ServerSocket socket, String name, LinkedBlockingQueue<ActionItem> incoming) {
@@ -58,6 +48,7 @@ public class Connection extends Thread implements Runnable {
 			this.in = new ObjectInputStream(sock.getInputStream());
 		} catch (IOException io) { System.out.println("Could not establish connection '" + connectionName + "': " + io.getMessage()); }
 		System.out.println(connectionName + " connected!");
+		alive = true;
 		while (alive) {
 			try {
 				while ((curr = in.readObject()) != null) queue.put(new ActionItem(curr));

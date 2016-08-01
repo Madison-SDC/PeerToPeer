@@ -28,7 +28,7 @@ public class ActionRouter extends Thread implements Runnable {
 		while (true) {
 			while ((curr = queue.poll()) != null) {
 				tries = 5;
-				while (sendActionObject(curr) && tries > 0) {
+				while (!sendActionObject(curr) && tries > 0) {
 					mySleep(500); 
 					System.out.print("Retry " + tries + " . . . ");
 					tries--;
@@ -43,19 +43,19 @@ public class ActionRouter extends Thread implements Runnable {
 
 	private synchronized boolean sendActionObject(ActionItem a) {
 		if (a.willBroadcast()) { return broadcastActionObject(a); }
-		try { 
-			currConnection = cm.getConnection(currentSelectedConnection);
-			if (currConnection.isAlive()) {
-				System.out.println("Sending to: " + currentSelectedConnection + " . . . ");
-				currConnection.sendObject(a);
-				return false;
-			}
-			else System.out.println("That connection is dead.");
-		} catch (NullPointerException npe) { 
-			System.out.println("Connection '" + currentSelectedConnection + "' is not up yet!");
+		currConnection = cm.getConnection(currentSelectedConnection);
+		if (currConnection == null) {
+			System.out.println("'" + currentSelectedConnection + "' does not exist!");
+			return false;
+		}
+		if (currConnection.isConnected()) {
+			currConnection.sendObject(a);
 			return true;
-		} catch (Exception se) { System.out.println(se.getMessage()); }
-		return false;
+		}
+		else {
+			System.out.println("'" + currentSelectedConnection + "' not connected yet!");
+			return false;
+		}
 	}
 
 	private boolean broadcastActionObject(ActionItem a) {
