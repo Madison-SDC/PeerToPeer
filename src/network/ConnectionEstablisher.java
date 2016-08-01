@@ -3,6 +3,7 @@ package network;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -58,7 +59,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 	public void run() {
 		if (listening) {
 			try {
-				Socket newConnection = listeningSocket.accept(); // blocking
+				Socket newConnection = listeningSocket.accept();
 				ObjectOutputStream out = new ObjectOutputStream(newConnection.getOutputStream());
 				ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
 				conn = new Connection(out, in, name, incoming);
@@ -67,7 +68,7 @@ public class ConnectionEstablisher extends Thread implements Runnable {
 		}
 		else {
 			try {
-				initialSocket = new Socket(ip, port); // blocking?
+				initialSocket = new Socket(InetAddress.getByName(ip), port);
 				ObjectOutputStream out = new ObjectOutputStream(initialSocket.getOutputStream());
 				ObjectInputStream in = new ObjectInputStream(initialSocket.getInputStream());
 				conn = new Connection(out, in, name, incoming);

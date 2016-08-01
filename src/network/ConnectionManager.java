@@ -11,6 +11,7 @@ public class ConnectionManager {
 
 	HashMap<String, Connection> allConnections;
 	HashMap<Integer, ServerSocket> serverSockets;
+	HashMap<String, ConnectionEstablisher> connectionChecker;
 	
 	LinkedBlockingQueue<ActionItem> incoming;
 	LinkedBlockingQueue<ActionItem> outgoing;
@@ -18,6 +19,7 @@ public class ConnectionManager {
 	public ConnectionManager() {
 		allConnections = new HashMap<String, Connection>();
 		serverSockets = new HashMap<Integer, ServerSocket>();
+		connectionChecker = new HashMap<String, ConnectionEstablisher>();
 		incoming = new LinkedBlockingQueue<ActionItem>();
 		outgoing = new LinkedBlockingQueue<ActionItem>();
 	}
@@ -37,14 +39,12 @@ public class ConnectionManager {
 			} catch (IOException io) { io.printStackTrace(); }
 		}
 		ce = new ConnectionEstablisher(tempSock, name, incoming);
-		while(ce.getConnection() == null); // since this blocks, why should I have it threaded?
-		this.addConnection(name, ce.getConnection());
+		connectionChecker.put(name, ce);
 	}
 	
 	public synchronized void connectTo(String ip, int port, String name) {
 		ConnectionEstablisher ce = new ConnectionEstablisher(ip, port, name, incoming);
-		while(ce.getConnection() == null); // since this blocks, why should I have it threaded?
-		this.addConnection(name, ce.getConnection());
+		connectionChecker.put(name, ce);
 	}
 	
 	public void closeAllConnections() {
@@ -52,7 +52,22 @@ public class ConnectionManager {
 	}
 	
 	public synchronized void addConnection(String name, Connection conn) { allConnections.put(name, conn); }
-	public Connection getConnection(String name) { return allConnections.get(name); }
+	public Connection getConnection(String name) {
+		
+		// Connection has been retrieved & established
+		if (allConnections.containsKey(name)) return allConnections.get(name);
+		
+		// Connection hasn't been retrieved
+		Connection temp = connectionChecker.get(name).getConnection();
+		
+		// If it wasn't ready, return null
+		if (temp == null) return null;
+		
+		// If it was ready, garbage collect connectionChecker, add it to connections
+		allConnections.put(name, temp);
+		connectionChecker.remove(name);
+		return temp;
+	}
 	
 	public LinkedBlockingQueue<ActionItem> getOutgoingQueue() { return outgoing; }
 	public LinkedBlockingQueue<ActionItem> getIncomingQueue() { return incoming; }

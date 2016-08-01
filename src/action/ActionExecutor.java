@@ -20,7 +20,6 @@ public class ActionExecutor extends Thread implements Runnable {
 			catch (InterruptedException ie) { ie.printStackTrace(); }
 			executeEvent(curr);
 		}
-		//while ((curr = events.poll()) != null) executeEvent(curr);
 	}
 	
 	private void executeEvent(ActionItem event) {
