@@ -17,7 +17,6 @@ public class Application {
 	private static ActionExecutor ae;
 	private static LinkedBlockingQueue<ActionItem> userInput;
 	private static BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-	private static boolean running = true;
 	
 	public static void main(String[] args) {
 		int currComputer = 1;
@@ -32,7 +31,7 @@ public class Application {
 		}
 
 		String userStringInput;
-		while (running) {
+		while (true) {
 			try {
 				while ((userStringInput = stdIn.readLine()) != null) processInput(userStringInput);
 			} catch (IOException io) { io.printStackTrace(); }
@@ -47,7 +46,6 @@ public class Application {
 	}
 	
 	private static void shutdown() {
-		running = false;
 		try { stdIn.close(); } catch (IOException io) { io.printStackTrace(); } 
 		cm.closeAllConnections();
 		System.exit(1); // is the above necessary?
