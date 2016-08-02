@@ -14,6 +14,7 @@ public class Connection extends Thread implements Runnable {
 	private boolean alive = false;
 	private boolean fromListening = false;
 	private boolean died = false;
+	private boolean isPending = true;
 	private LinkedBlockingQueue<ActionItem> queue;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
@@ -27,6 +28,7 @@ public class Connection extends Thread implements Runnable {
 		this.connectionName = name;
 		this.queue = incoming;
 		this.sock = socket;
+		this.isPending = false;
 		this.start();
 	}
 	
@@ -41,7 +43,7 @@ public class Connection extends Thread implements Runnable {
 
 	public void run() {
 		if (fromListening) {
-			try { sock = serverSock.accept(); } 
+			try { sock = serverSock.accept(); isPending = false; } 
 			catch (IOException io) { System.out.println("Could not establish connection '" + connectionName + "': " + io.getMessage()); }
 		}
 		try {
@@ -77,5 +79,6 @@ public class Connection extends Thread implements Runnable {
 
 	public String getConnectionName() { return connectionName; }
 	public boolean isConnected() { return alive; }
+	public boolean isPending() { return isPending; }
 	public boolean isDead() { return died; }
 }
