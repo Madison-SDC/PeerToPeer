@@ -59,6 +59,7 @@ public class Player {
 	public void takeTrick(Trick trick) { 
 		tricksWon.add(trick);
 		banked.addAll(trick.getCards());
+		System.out.println(this.getName() + " got " + getPoints(trick.getCards()) + " points!");
 	}
 	
 	public boolean isPartner() { return partnerCard; }
@@ -66,11 +67,6 @@ public class Player {
 	public Card playCard(int index) { return hand.remove(index); }
 	
 	public List<Card> getHand() { return hand; }
-	
-	public boolean hasRed() { return hasSuit(Suit.RED); }
-	public boolean hasBlack() { return hasSuit(Suit.BLACK); }
-	public boolean hasGreen() { return hasSuit(Suit.GREEN); }
-	public boolean hasBlue() { return hasSuit(Suit.BLUE); }
 	
 	public boolean hasSuit(Suit suit) {
 		Iterator<Card> itr = hand.iterator();

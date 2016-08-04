@@ -34,26 +34,29 @@ public class TestGame {
 		whoGoesFirst();
 		
 		boolean playing = true;
-		boolean leaster = false;
+		boolean leaster = waitForPickups();
+		
+		System.out.println(order[firstToDecide].getName() + " was the first to decide to pick up, he goes first.");
+		
+		currPlayer = firstToDecide;
+		
 		while (playing) {
-			
-			leaster = waitForPickups();
-			
-			System.out.println(order[firstToDecide].getName() + " was the first to decide to pick up, he goes first.");
-			currPlayer = firstToDecide;
-			
 			// play a new trick
+			System.out.println("Starting a new trick!");
 			Trick currTrick = new Trick(players.size());
 			while (!currTrick.isOver()) {
 				currTrick.addCard(order[currPlayer], getPlayerMove(currTrick));
 				getUpNext();
 			}
-			
-			// check who won the trick
-			
-			playing = false;
+			currTrick.getWinningPlayer().takeTrick(currTrick);
+			setWinnerAsCurrPlayer(currTrick.getWinningPlayer());
+			if (order[0].getHand().isEmpty()) playing = false;
 		}
 		System.out.println("Game over!");
+		
+		// see everyone's points
+		for (int i = 0; i < order.length; i++)
+			order[i].printBanked();
 	}
 	
 	public static void getUpNext() { 
@@ -70,6 +73,11 @@ public class TestGame {
 		}
 		if (userInput.charAt(0) == 'y') return true;
 		return false;
+	}
+	
+	public static void setWinnerAsCurrPlayer(Player player) {
+		for (int i = 0; i < order.length; i++)
+			if (order[i].equals(player)) currPlayer = i;
 	}
 	
 	public static Card getPlayerMove(Trick trick) {

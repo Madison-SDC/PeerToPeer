@@ -86,6 +86,7 @@ public class Trick {
 			if (currCard.equals(this.getWinningCard())) retval += " **WILL WIN**";
 			retval += "\n";
 		}
+		retval += "========================================\n";
 		return retval;
 	}
  }
