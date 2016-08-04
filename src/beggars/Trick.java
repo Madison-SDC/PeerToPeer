@@ -31,14 +31,18 @@ public class Trick {
 	 * 
 	 * False: trick is not over
 	 */
-	public boolean addCard(Player player, Card card) {
+	public void addCard(Player player, Card card) {
 		// first card
 		if (cards.size() == 0) playedSuit = card.getSuit();
 		cardToPlayer.put(card, player);
 		cards.add(card);
-		if (this.isOver()) return true;
-		return false;
+		//if (this.isOver()) return true;
+		//return false;
 	}
+	
+	public boolean isFirstMove() { return cards.isEmpty(); }
+	
+	public Suit getPlayedSuit() { return playedSuit; }
 	
 	/*
 	 * Returns the player that won the trick, if the trick is over.
@@ -61,7 +65,8 @@ public class Trick {
 		while (itr.hasNext()) {
 			Card curr = itr.next();
 			if (curr.getSuit().equals(suit))
-				if (temp != null && curr.getValue() > temp.getValue()) temp = curr;
+				if (temp == null) temp = curr;
+				else if (temp != null && curr.getValue() > temp.getValue()) temp = curr;
 		}
 		return temp;
 	}

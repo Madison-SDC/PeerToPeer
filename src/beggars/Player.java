@@ -63,7 +63,9 @@ public class Player {
 	
 	public boolean isPartner() { return partnerCard; }
 	
-	public boolean playCard(Card card) { return hand.remove(card); }
+	public Card playCard(int index) { return hand.remove(index); }
+	
+	public List<Card> getHand() { return hand; }
 	
 	public boolean hasRed() { return hasSuit(Suit.RED); }
 	public boolean hasBlack() { return hasSuit(Suit.BLACK); }

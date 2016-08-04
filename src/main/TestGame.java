@@ -3,6 +3,7 @@ package main;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import beggars.Card;
 import beggars.GameTracker;
 import beggars.Player;
 import beggars.Trick;
@@ -10,7 +11,8 @@ import beggars.Trick;
 public class TestGame {
 	
 	private static GameTracker game;
-	private static int currPlayer = 0;
+	private static int currPlayer = -1;
+	private static int firstToDecide = -1;
 	private static Player[] order;
 	private static HashMap<String, Player> players;
 	private static Scanner sc = new Scanner(System.in);	
@@ -23,14 +25,13 @@ public class TestGame {
 		players.put("Brian", new Player("Brian"));
 		
 		order = new Player[]{
-				players.get("Peter"),
-				players.get("Vaughn"),
-				players.get("Brian")
+			players.get("Peter"),
+			players.get("Vaughn"),
+			players.get("Brian")
 		};
 		
 		game = new GameTracker(players);
-		//game.printDownCards();
-		//testPrintHands();
+		whoGoesFirst();
 		
 		boolean playing = true;
 		boolean leaster = false;
@@ -38,32 +39,67 @@ public class TestGame {
 			
 			leaster = waitForPickups();
 			
+			System.out.println(order[firstToDecide].getName() + " was the first to decide to pick up, he goes first.");
+			currPlayer = firstToDecide;
+			
 			// play a new trick
-			//Trick currTrick = new Trick(players.size());
-			//while (currTrick.isOver()) {
-				
-			//}
+			Trick currTrick = new Trick(players.size());
+			while (!currTrick.isOver()) {
+				currTrick.addCard(order[currPlayer], getPlayerMove(currTrick));
+				getUpNext();
+			}
+			
+			// check who won the trick
+			
 			playing = false;
 		}
 		System.out.println("Game over!");
 	}
 	
-	public static Player getUpNext() { 
-		if (currPlayer == order.length) currPlayer = 0;
-		Player temp = order[currPlayer];
+	public static void getUpNext() { 
+		if (currPlayer == order.length - 1) currPlayer = 0;
 		currPlayer++;
-		return temp;
 	}
 	
 	public static boolean askPlayerToPickUp(Player player) {
 		String userInput = "";
 		while (!userInput.equalsIgnoreCase("y") && !userInput.equalsIgnoreCase("n")) {
-			System.out.println(player.getName()+", would you like to pick up the " + game.numDownCards() + " cards? ('hand' to see hand)");
+			System.out.println(player.getName() + ", would you like to pick up the " + game.numDownCards() + " cards? ('hand' to see hand)");
 			userInput = sc.nextLine();
 			if (userInput.equalsIgnoreCase("hand")) player.printHand();
 		}
 		if (userInput.charAt(0) == 'y') return true;
 		return false;
+	}
+	
+	public static Card getPlayerMove(Trick trick) {
+		System.out.println(trick.toString());
+		System.out.println(order[currPlayer].getName() + ", what card would you like to play?");
+		order[currPlayer].printHand();
+		int cardIndex = -1;
+		Card currCard = null;
+		while (cardIndex == -1) {
+			while (!sc.hasNextInt()) sc.nextLine();
+			cardIndex = sc.nextInt();
+			try {
+				currCard = order[currPlayer].getHand().get(cardIndex-1);
+				if (!verifyMove(trick, currCard)) {
+					System.out.println("You can't play " + currCard.toString() + " !!");
+					cardIndex = -1;
+				}
+				// verify input
+			} catch (Exception e) { System.out.println("Choose a valid index!"); cardIndex = -1; }
+		}
+		System.out.println(order[currPlayer].getName() + " played: " + currCard.toString());
+		return order[currPlayer].playCard(cardIndex-1);
+	}
+	
+	public static boolean verifyMove(Trick trick, Card card) {
+		if (trick.isFirstMove()) return true; // first played card always valid
+		if (trick.getPlayedSuit().equals(card.getSuit())) return true; // same suit always valid
+		else // player is playing a different suit
+			if (order[currPlayer].hasSuit(trick.getPlayedSuit())) return false; // re-nigger!
+		return true;
 	}
 	
 	public static void havePlayerBankCards(Player player) {
@@ -82,19 +118,38 @@ public class TestGame {
 		}
 	}
 	
+	public static void whoGoesFirst() {
+		String question = "Who is going first? (";
+		String userInput;
+		for (int i = 0; i < order.length; i++) {
+			if (i != order.length - 1) question += order[i].getName() + ", ";
+			else question += order[i].getName();
+		}
+		question += ")";
+		while (currPlayer == -1) {
+			System.out.println(question);
+			userInput = sc.nextLine();
+			for (int i = 0; i < order.length; i++)
+				if (userInput.equalsIgnoreCase(order[i].getName())) {
+					firstToDecide = i;
+					currPlayer = i;
+				}
+		}
+		System.out.println(order[currPlayer].getName() + " is choosing to pick up first!");
+	}
+	
 	/*
 	 * Returns whether or not the game is a leaster.
 	 */
 	public static boolean waitForPickups() {
-		System.out.println(order[currPlayer].getName() + " is choosing first!");
 		int chances = 0;
 		while (!game.pickedUp() && chances < players.size()) {
-			Player currPlayer = getUpNext();
-			if (askPlayerToPickUp(currPlayer)) {
-				currPlayer.pickUp(game.getDownCards());
-				havePlayerBankCards(currPlayer);
+			Player curr = order[currPlayer];
+			if (askPlayerToPickUp(curr)) {
+				curr.pickUp(game.getDownCards());
+				havePlayerBankCards(curr);
 			}
-			else chances++;
+			else { chances++; getUpNext(); }
 		}
 		if (!game.pickedUp() && chances == players.size()) {
 			System.out.println("Leaster!");
